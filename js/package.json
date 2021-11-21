@@ -1,0 +1,23 @@
+{
+  "name": "js",
+  "version": "1.0.0",
+  "description": "使用方法 控制台 node .\\js\\ABIs\\BMM.js 就会打印对应abi的 每个函数，name/input/output （每个值都可能为空） 例如 ```js {     name: 'balanceOf',     input: '[{\"name\":\"account\",\"type\":\"address\"}]',     output: '[{\"name\":\"\",\"type\":\"uint256\"}]',     stateMutability: 'nonpayable' }, 这个应该调用 const contract = new Contract(abi, addr); const balance = await contract.methods.balanceOf(account).call()",
+  "main": "getContract.js",
+  "dependencies": {
+    "axios": "^0.24.0",
+    "chalk": "^4.1.2",
+    "ethereum-input-data-decoder": "^0.3.5",
+    "ethereumjs-common": "^1.5.2",
+    "ethereumjs-tx": "^2.1.2",
+    "express": "^4.17.1",
+    "web3": "^1.6.0",
+    "web3-eth-contract": "^1.6.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "getContract": "node getContract"
+  },
+  "author": "",
+  "license": "ISC"
+}
