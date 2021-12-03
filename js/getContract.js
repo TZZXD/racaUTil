@@ -1,5 +1,6 @@
 const Web3 = require('web3');
 const Contract = require('web3-eth-contract');
+const RACAConfig = require('./ABIs/RACA');
 const unknownConfig = require('./ABIs/unknownABI');
 const express = require('express');
 const chalk = require('chalk');
@@ -9,15 +10,24 @@ const InputDataDecoder = require('ethereum-input-data-decoder');
 const app = express();
 
 const { unknown, unknown_addr } = unknownConfig;
+const { RACA_ADDR, RACA_ABI } = RACAConfig;
+
 const decoder = new InputDataDecoder(unknown);
 const wssUrl = 'https://bsc-dataseed1.binance.org';
 const web3 = new Web3(wssUrl);
 Contract.setProvider(web3);
 const currentContract = new Contract(unknown, unknown_addr);
+const racaCurrentContract = new Contract(RACA_ABI, RACA_ADDR);
+
 const account = process.env.my_address;
 const privateKey = process.env.my_key;
+let balance
 
 setInterval(() => {
+  racaCurrentContract.methods.balanceOf(account + '').call().then(res => {
+    balance = Math.floor(web3.utils.fromWei(res, 'ether'))
+  })
+
   currentContract.getPastEvents('allEvents', { toBlock: 'latest' }, function (error, events) {
     if (events) {
       events.forEach(async event => {
@@ -27,14 +37,15 @@ setInterval(() => {
         ) {
           const eventReceiptInfo = await web3.eth.getTransactionReceipt(event.transactionHash);
           const eventInfo = await web3.eth.getTransaction(event.transactionHash);
+          
           if (eventReceiptInfo && eventInfo) {
             const auctionId = eventReceiptInfo.logs[2].topics[2].split('0x')[1];
-
             const input = decoder.decodeData(eventInfo.input);
             const price = web3.utils.fromWei(input.inputs[4], 'ether');
-            console.log('元兽:', 'auctionId:', auctionId, '总价:', price, 'hash:', event.transactionHash);
 
-            if (Number(price) < 20000) {
+            if (Number(price) < 50000 && balance > price) {
+              console.log('元兽:', 'auctionId:', auctionId, '总价:', price, 'hash:', event.transactionHash);
+
               const tx = await currentContract.methods.executeAuction(
                 web3.utils.toBN(auctionId),
                 web3.utils.toBN(web3.utils.toWei(String(price), 'ether'))
@@ -44,7 +55,7 @@ setInterval(() => {
                   from: account,
                   to: unknown_addr,
                   value: 0,
-                  gas: 200000,
+                  gas: 1299999,
                   data: tx.encodeABI(),
                 },
                 privateKey

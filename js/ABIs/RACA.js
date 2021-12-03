@@ -547,7 +547,7 @@ const RACA_ABI = [{
 }]
 
 const showDetail = require('../showContractDetail')
-showDetail(RACA_ABI)
+// showDetail(RACA_ABI)
 
 module.exports = {
 	RACA_ADDR,

@@ -1,7 +1,7 @@
 {
   "name": "js",
   "version": "1.0.0",
-  "description": "使用方法 控制台 node .\\js\\ABIs\\BMM.js 就会打印对应abi的 每个函数，name/input/output （每个值都可能为空） 例如 ```js {     name: 'balanceOf',     input: '[{\"name\":\"account\",\"type\":\"address\"}]',     output: '[{\"name\":\"\",\"type\":\"uint256\"}]',     stateMutability: 'nonpayable' }, 这个应该调用 const contract = new Contract(abi, addr); const balance = await contract.methods.balanceOf(account).call()",
+  "description": "",
   "main": "getContract.js",
   "dependencies": {
     "axios": "^0.24.0",
