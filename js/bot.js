@@ -78,16 +78,20 @@ const getTemp = (info = {}) => {
 let id = 0;
 const query = () => {
   console.log('querying', new Date())
-  axios.get('https://api.jinse.com/live/list').then(res => {
-    const { top_id = 0, list = [] } = res?.data || {};
-    if(top_id!== id && list.length) {
-      id = top_id
-      const { lives = [] } = list[0]
-      if (lives.length) {
-        send(getTemp(lives[0]));
+  try {
+    axios.get('https://api.jinse.com/live/list').then(res => {
+      const { top_id = 0, list = [] } = res?.data || {};
+      if(top_id!== id && list.length) {
+        id = top_id
+        const { lives = [] } = list[0]
+        if (lives.length) {
+          send(getTemp(lives[0]));
+        }
       }
-    }
-  })
+    })
+  } catch (e){
+    console.log(e)
+  }
 }
 const send = (card) => {
   axios.post(hook, {
