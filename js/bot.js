@@ -4,8 +4,8 @@ const express = require('express');
 const chalk = require('chalk');
 
 const app = express();
-// const testHook = 'https://open.feishu.cn/open-apis/bot/v2/hook/4ef746b8-6351-49d1-bba7-1d2428ea0f2d';
-const hook = 'https://open.feishu.cn/open-apis/bot/v2/hook/d9315fd3-1762-42b2-ad7a-f0655fbd8ac7';
+const hook = 'https://open.feishu.cn/open-apis/bot/v2/hook/4ef746b8-6351-49d1-bba7-1d2428ea0f2d';
+// const hook = 'https://open.feishu.cn/open-apis/bot/v2/hook/d9315fd3-1762-42b2-ad7a-f0655fbd8ac7';
 
 const getTemp = (info = {}) => {
   const { content = '', created_at = 0, id = 0 } = info
@@ -83,12 +83,15 @@ const query = () => {
   console.log('querying', new Date())
   try {
     axios.get('https://api.jinse.com/live/list').then(res => {
-      const { top_id = 0, list = [] } = res?.data || {};
-      if(top_id!== id && list.length) {
-        id = top_id
+      const { list = [] } = res?.data || {};
+
+      if(list.length) {
         const { lives = [] } = list[0]
-        if (lives.length) {
-          send(getTemp(lives[0]));
+        const article = lives.find((item) => +item?.grade === 5);
+
+        if (article && article.id && id !== article.id) {
+          id = article.id;
+          send(getTemp(article));
         }
       }
     })
