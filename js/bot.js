@@ -1,6 +1,9 @@
 const axios = require('axios')
 const dayjs = require('dayjs')
+const express = require('express');
+const chalk = require('chalk');
 
+const app = express();
 // const testHook = 'https://open.feishu.cn/open-apis/bot/v2/hook/4ef746b8-6351-49d1-bba7-1d2428ea0f2d';
 const hook = 'https://open.feishu.cn/open-apis/bot/v2/hook/d9315fd3-1762-42b2-ad7a-f0655fbd8ac7';
 
@@ -94,13 +97,19 @@ const query = () => {
   }
 }
 const send = (card) => {
-  axios.post(hook, {
-    msg_type: 'interactive',
-    card
-  }).then(res => console.log(res))
+  try {
+    axios.post(hook, {
+      msg_type: 'interactive',
+      card
+    })
+  } catch (e) {
+    chalk.red(e);
+  }
 }
 
 query()
 setInterval(() => {
   query()
 }, 60000)
+
+app.listen(30089, console.log(chalk.yellow('Listening for new now')));
